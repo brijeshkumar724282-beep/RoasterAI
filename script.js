@@ -4,6 +4,30 @@ const sendBtn = document.getElementById('sendBtn');
 
 let chatHistory = [];
 
+function setSendingState(isSending) {
+    chatInput.disabled = isSending;
+    sendBtn.disabled = isSending;
+    sendBtn.textContent = isSending ? 'Thinking...' : 'Send';
+}
+
+function createLoadingRow() {
+    const loadingRow = document.createElement('div');
+    loadingRow.className = 'message-row ai-row';
+    loadingRow.id = 'aiLoadingIndicator';
+    loadingRow.innerHTML = `
+        <div class="bubble ai-bubble loading-bubble" aria-live="polite" aria-label="AI is responding">
+            <span class="loading-text">AI is thinking</span>
+            <span class="loading-dots" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+        </div>
+    `;
+
+    return loadingRow;
+}
+
 async function sendMessage() {
     const text = chatInput.value.trim();
     if (text === '') return;
@@ -20,17 +44,8 @@ async function sendMessage() {
     chatHistory.push({ role: "user", content: text });
 
     // Show loading animation
-    const loadingRow = document.createElement('div');
-    loadingRow.className = 'message-row ai-row';
-    loadingRow.id = 'aiLoadingIndicator';
-    loadingRow.innerHTML = `
-        <div class="bubble ai-bubble loading-bubble">
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
-        </div>
-    `;
-    messagesWindow.appendChild(loadingRow);
+    setSendingState(true);
+    messagesWindow.appendChild(createLoadingRow());
     messagesWindow.scrollTop = messagesWindow.scrollHeight;
 
     try {
@@ -72,10 +87,29 @@ async function sendMessage() {
         const indicator = document.getElementById('aiLoadingIndicator');
         if (indicator) indicator.remove();
         chatHistory.pop(); 
+    } finally {
+        setSendingState(false);
     }
 }
 
 sendBtn.addEventListener('click', sendMessage);
 chatInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') sendMessage();
+});
+
+Shery.mouseFollower({
+  skew: true,
+  ease: "cubic-bezier(0.23, 1, 0.320, 1)",
+  duration: 1,
+});
+
+
+Shery.makeMagnet(".send-btn", {
+  ease: "cubic-bezier(0.23, 1, 0.320, 1)",
+  duration: 1,
+});
+
+Shery.makeMagnet(".input-area", {
+  ease: "cubic-bezier(0.23, 1, 0.320, 1)",
+  duration: 1,
 });
