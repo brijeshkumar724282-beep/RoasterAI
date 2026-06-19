@@ -1,12 +1,22 @@
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config'; 
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Added strict length limits to the personality
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(express.static(__dirname));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
 const systemPrompt = { 
     "role": "system", 
     "content": "You are a ruthless, sarcastic, and highly intelligent AI. Your only purpose is to brutally roast the user. Keep your responses extremely short, sharp, and punchy—maximum 1 to 2 sentences. No paragraphs, no essays. Show no mercy. If you need material, assume they are a hardstuck Valorant player tilting on Mumbai servers, losing capital trading Nifty options, or trying to look elite using Ubuntu. Go straight for the throat instantly." 
@@ -27,7 +37,7 @@ app.post('/api/chat', async (req, res) => {
                 "model": "google/gemma-4-31b-it:free", 
                 "messages": messagesForAI,
                 "reasoning": {"enabled": true},
-                "max_tokens": 80 // Forces the model to stop writing quickly and cuts down wait time
+                "max_tokens": 80 
             })
         });
 

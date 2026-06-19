@@ -1,7 +1,7 @@
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #121212;
-    color: #ffffff;
+    font-family: times new roman, serif;
+    background-color: #f7ffea;
+    color: #1a1a1a;
     margin: 0;
     display: flex;
     justify-content: center;
@@ -36,10 +36,12 @@ body {
 
 .user-row {
     justify-content: flex-end;
+
 }
 
 .ai-row {
     justify-content: flex-start;
+
 }
 
 .bubble {
@@ -51,8 +53,12 @@ body {
 }
 
 .user-bubble {
-    background-color: #0b93f6;
-    color: white;
+    background-color: rgba(224, 235, 213,0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255,0.5);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    color: #414141;
     border-bottom-right-radius: 4px;
 }
 
@@ -64,39 +70,46 @@ body {
 
 .input-area {
     display: flex;
-    padding: 15px;
-    background-color: #2a2a2a;
-    border-top: 1px solid #444;
-    width: 80%;
-    margin: 3vh auto;
+    padding: 12px;
+    width: 85%;
+    margin: 2vh auto 3vh auto;
     border-radius: 30px;
+    background:rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 32px rgba(96, 96, 96, 0.05);
 }
 
 .input-box {
     flex: 1;
-    padding: 12px;
+    padding: 12px 16px;
     border: none;
-    border-radius: 30px;
-    background-color: #444;
-    color: white;
+    background-color: transparent; 
+    color: #1a1a1a;
     font-size: 15px;
     outline: none;
 }
 
+.input-box::placeholder {
+    color: #888888;
+}
+
 .send-btn {
     margin-left: 10px;
-    padding: 0 20px;
-    background-color: #434343;
+    padding: 0 24px;
+    background: linear-gradient(180deg, #333333 0%, #1a1a1a 100%);
     color: white;
     border: none;
     border-radius: 30px;
-    font-weight: bold;
+    font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
-
 .send-btn:hover {
-    background-color: #0077c9;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.25);
 }
 
 .send-btn:disabled {
@@ -159,17 +172,17 @@ body {
 .chat-header{
     text-align: center;
     padding: 20px 0px 10px 0px;
-    background-color: #000000;
-    border-bottom: 1px solid #000000;
-    z-index: 1000;
+    background: transparent;
+    border-bottom: none;
+    z-index: 10;
 }
 
 .chat-header h1{
     margin: 0;
-    font-size: 8vw;
-    font-family: 'Arial Black', sans-serif;
-    font-weight: 900;
-    letter-spacing: 2px;
-    color: #595959;
+    font-size: 4vw;
+    font-family: 'Georgia', serif;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #1a1a1a;
     text-transform: uppercase;
 }
