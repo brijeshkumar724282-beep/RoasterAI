@@ -22,7 +22,7 @@ app.use(express.static(publicDir));
 app.use(express.static(__dirname));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(publicDir, 'index.html'));
 });
 
 const systemPrompt = {
