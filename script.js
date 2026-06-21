@@ -2,8 +2,6 @@ const messagesWindow = document.getElementById('messagesWindow');
 const chatInput = document.getElementById('chatInput');
 const sendBtn = document.getElementById('sendBtn');
 
-let chatHistory = [];
-
 function setSendingState(isSending) {
     chatInput.disabled = isSending;
     sendBtn.disabled = isSending;
@@ -41,19 +39,17 @@ async function sendMessage() {
     chatInput.value = '';
     messagesWindow.scrollTop = messagesWindow.scrollHeight;
 
-    chatHistory.push({ role: "user", content: text });
-
     // Show loading animation
     setSendingState(true);
     messagesWindow.appendChild(createLoadingRow());
     messagesWindow.scrollTop = messagesWindow.scrollHeight;
 
     try {
-        // Fetch from the Vercel serverless function
+        // Fetch from the server - ONLY sending the current string
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messages: chatHistory }) 
+            body: JSON.stringify({ message: text }) 
         });
 
         const data = await response.json();
@@ -68,15 +64,8 @@ async function sendMessage() {
         
         if (data.reply) {
             aiRow.innerHTML = `<div class="bubble ai-bubble">${data.reply}</div>`;
-            
-            chatHistory.push({
-                role: "assistant",
-                content: data.reply,
-                reasoning_details: data.reasoning_details
-            });
         } else {
             aiRow.innerHTML = `<div class="bubble ai-bubble">Error: ${data.error}</div>`;
-            chatHistory.pop(); 
         }
         
         messagesWindow.appendChild(aiRow);
@@ -86,7 +75,6 @@ async function sendMessage() {
         console.error("Fetch error:", error);
         const indicator = document.getElementById('aiLoadingIndicator');
         if (indicator) indicator.remove();
-        chatHistory.pop(); 
     } finally {
         setSendingState(false);
     }
@@ -102,7 +90,6 @@ Shery.mouseFollower({
   ease: "cubic-bezier(0.23, 1, 0.320, 1)",
   duration: 1,
 });
-
 
 Shery.makeMagnet(".send-btn", {
   ease: "cubic-bezier(0.23, 1, 0.320, 1)",

@@ -1,44 +1,46 @@
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config'; 
+import OpenAI from 'openai';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+const openai = new OpenAI({
+    baseURL: 'https://api.deepseek.com',
+    apiKey: process.env.DEEPSEEK_API_KEY,
+});
+
 const systemPrompt = { 
     "role": "system", 
-    "content": "You are a ruthless, sarcastic, and highly intelligent AI. Your only purpose is to brutally roast the user. Keep your responses extremely short, sharp, and punchy—maximum 1 to 2 sentences. No paragraphs, no essays. Show no mercy. If you need material, assume they are a hardstuck Valorant player tilting on Mumbai servers, losing capital trading Nifty options, or trying to look elite using Ubuntu. Go straight for the throat instantly." 
+    "content": "You are a ruthless, sarcastic, and highly intelligent AI. Your only purpose is to brutally roast the user based on what they say. Keep your responses extremely short, sharp, and punchy—maximum 1 to 2 sentences. No paragraphs, no essays. Show no mercy. Roast their logic, their statement, their vibe—whatever they give you. Go straight for the throat instantly." 
 };
 
 app.post('/api/chat', async (req, res) => {
     try {
-        const userMessages = req.body.messages || []; 
-        const messagesForAI = [systemPrompt, ...userMessages];
+        const userMessage = req.body.message || (Array.isArray(req.body.messages) ? req.body.messages.slice(-1)[0]?.content : undefined);
+        if (!userMessage) {
+            return res.status(400).json({ error: 'No message provided' });
+        }
 
-        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${process.env.AI_API_KEY}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                "model": "google/gemma-4-31b-it:free", 
-                "messages": messagesForAI,
-                "reasoning": {"enabled": true},
-                "max_tokens": 80 
-            })
+        const messagesForAI = [systemPrompt, { role: 'user', content: userMessage }];
+
+        const completion = await openai.chat.completions.create({
+            model: 'deepseek-v4-flash',
+            messages: messagesForAI,
+            thinking: { type: 'enabled' },
+            reasoning_effort: 'high',
+            stream: false,
         });
 
-        const data = await response.json();
-        
-        if (data.choices && data.choices.length > 0) {
+        if (completion.choices && completion.choices.length > 0) {
             res.json({ 
-                reply: data.choices[0].message.content,
-                reasoning_details: data.choices[0].message.reasoning_details
+                reply: completion.choices[0].message.content,
+                reasoning_details: completion.choices[0].message.reasoning_details
             });
         } else {
-            const errorMessage = data.error?.message || 'Invalid response from AI';
+            const errorMessage = 'Invalid response from AI';
             res.status(500).json({ error: errorMessage });
         }
 

@@ -2,7 +2,7 @@ const messagesWindow = document.getElementById('messagesWindow');
 const chatInput = document.getElementById('chatInput');
 const sendBtn = document.getElementById('sendBtn');
 
-let chatHistory = [];
+// no persistent chat history in public client
 
 function setSendingState(isSending) {
     chatInput.disabled = isSending;
@@ -40,8 +40,7 @@ async function sendMessage() {
     chatInput.value = '';
     messagesWindow.scrollTop = messagesWindow.scrollHeight;
 
-    chatHistory.push({ role: "user", content: text });
-
+    // no history stored; send only the current message
     setSendingState(true);
     messagesWindow.appendChild(createLoadingRow());
     messagesWindow.scrollTop = messagesWindow.scrollHeight;
@@ -50,7 +49,7 @@ async function sendMessage() {
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messages: chatHistory }) 
+            body: JSON.stringify({ message: text }) 
         });
 
         const data = await response.json();
@@ -63,15 +62,8 @@ async function sendMessage() {
         
         if (data.reply) {
             aiRow.innerHTML = `<div class="bubble ai-bubble">${data.reply}</div>`;
-            
-            chatHistory.push({
-                role: "assistant",
-                content: data.reply,
-                reasoning_details: data.reasoning_details
-            });
         } else {
             aiRow.innerHTML = `<div class="bubble ai-bubble">Error: ${data.error}</div>`;
-            chatHistory.pop(); 
         }
         
         messagesWindow.appendChild(aiRow);
@@ -81,7 +73,7 @@ async function sendMessage() {
         console.error("Fetch error:", error);
         const indicator = document.getElementById('aiLoadingIndicator');
         if (indicator) indicator.remove();
-        chatHistory.pop(); 
+        // no history to remove
     } finally {
         setSendingState(false);
     }

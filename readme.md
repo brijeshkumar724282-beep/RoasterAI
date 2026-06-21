@@ -1,18 +1,18 @@
 # RoasterAI
 
-A small chat UI backed by an Express API that forwards messages to OpenRouter and returns short roast-style replies.
+A small chat UI backed by an Express API that forwards messages to DeepSeek and returns short roast-style replies.
 
 ## Features
 
 - Simple chat interface in the browser
 - Express API at `/api/chat`
-- OpenRouter integration for AI responses
+- DeepSeek integration for AI responses
 - Vercel-friendly static asset setup
 
 ## Requirements
 
 - Node.js 18 or newer
-- An OpenRouter API key
+- A DeepSeek API key
 
 ## Setup
 
@@ -25,7 +25,7 @@ A small chat UI backed by an Express API that forwards messages to OpenRouter an
 2. Create a `.env` file in the project root and add your API key:
 
 	```bash
-	AI_API_KEY=your_openrouter_api_key_here
+	DEEPSEEK_API_KEY=your_deepseek_api_key_here
 	```
 
 ## Run locally
@@ -57,7 +57,7 @@ The app is set up so Vercel can serve the frontend files and the API separately.
 
 1. Push the repo to GitHub.
 2. Import the repository into Vercel.
-3. Add `AI_API_KEY` in the Vercel project environment variables.
+3. Add `DEEPSEEK_API_KEY` in the Vercel project environment variables.
 4. Deploy the project.
 
 If Vercel shows missing CSS or JS files, make sure the browser assets are being served from the root path and that the `public/` folder is included in the deployment.
@@ -66,4 +66,4 @@ If Vercel shows missing CSS or JS files, make sure the browser assets are being 
 
 - The frontend sends requests to `/api/chat`.
 - The backend expects `req.body.messages` to contain the chat history.
-- If replies stop working, the first things to check are the `AI_API_KEY` value and the browser console/network tab.
+- If replies stop working, the first things to check are the `DEEPSEEK_API_KEY` value and the browser console/network tab.
